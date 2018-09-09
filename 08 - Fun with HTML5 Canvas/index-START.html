@@ -7,11 +7,89 @@
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
+const canvas = document.querySelector('#draw');
+const ctx = canvas.getContext('2d');
+canvas.width = 813;
+canvas.height = 1024;
+var background = new Image();
+background.src = "https://c1.staticflickr.com/7/6213/6385627021_3ff538e3ae_b.jpg";
+
+// Make sure the image is loaded first otherwise nothing will draw.
+background.onload = function(){
+    ctx.drawImage(background,0,0);   
+}
+
+// Draw whatever else over top of it on the canvas.
+
+//ctx.fillStyle = "url('https://c1.staticflickr.com/7/6213/6385627021_3ff538e3ae_b.jpg)";
+ctx.strokeStyle = '#BADA55';
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.lineWidth = 5;
+ctx.globalCompositeOperation = 'xor'; // NAS GANAS DE JUGAR CON LOS BLENDMODES! W00T!
+
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+let hue = 0;
+let direction = true;
+
+function draw(e) {
+	if(!isDrawing) return; // stop fx from running when they are not moused down
+	console.log(e);
+	ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+	//ctx.lineWidth = hue; // increments line along hue
+	ctx.beginPath();
+	// start from
+	ctx.moveTo(lastX, lastY);
+	// go to 
+	ctx.lineTo(e.offsetX, e.offsetY);
+	ctx.stroke();
+	// update cursor position, ES6 style ("array destructuring")
+	//lastX = e.offsetX;
+	//lastY = e.offsetY;
+	[lastX, lastY] = [e.offsetX, e.offsetY];
+
+	hue++;
+	if (hue >= 360) {
+		hue = 0;
+	}
+
+	// if it's greater than 80, flip the direction so lineWidth doesn't continue to grow
+	if (ctx.lineWidth >= 80 || ctx.lineWidth <= 1){
+		direction = !direction;
+	}
+	//and depending on what that direction is, increase or decrease 
+	if (direction) {
+		ctx.lineWidth++;
+	} else {
+		ctx.lineWidth--;	
+	}
+
+
+} 
+
+canvas.addEventListener('mousedown', (e) => {
+	isDrawing = true; // this is a flag
+	[lastX, lastY] = [e.offsetX, e.offsetY];
+
+});
+
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', () => isDrawing = false);
+canvas.addEventListener('mouseout', () => isDrawing = false); // if user drags mouse outside canvas ;)
+
+
 </script>
 
 <style>
   html, body {
     margin:0;
+  }
+  body {
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
   }
 </style>
 
