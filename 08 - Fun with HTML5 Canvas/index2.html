@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas feat. our Lord and Savior PKD</title>
+</head>
+<body>
+<h1>If you think this universe is bad</h1>
+<section>
+	<canvas id="draw" width="813" height="1024">	
+	</canvas>
+</section>
+<h1>you should see some of the others.</h1>
+<script>
+const canvas = document.querySelector('#draw');
+const ctx = canvas.getContext('2d');
+canvas.width = 1000;
+canvas.height = 600;
+// FONDO EN CANVAS
+// var background = new Image();
+// background.src = "PKD.jpg";
+
+// // Make sure the image is loaded first otherwise nothing will draw.
+// background.onload = function(){
+//     ctx.drawImage(background,0,0);   
+// }
+
+// Draw whatever else over top of it on the canvas.
+ctx.strokeStyle = '#BADA55';
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.lineWidth = 5;
+ctx.globalCompositeOperation = 'xor'; // NAS GANAS DE JUGAR CON LOS BLENDMODES! W00T!
+
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+let hue = 0;
+let direction = true;
+
+function draw(e) {
+	if(!isDrawing) return; // stop fx from running when they are not moused down
+	console.log(e);
+	ctx.strokeStyle = `hsla(${hue}, 100%, 50%, .5)`;
+	//ctx.lineWidth = hue; // increments line along hue
+	ctx.beginPath();
+	// start from
+	ctx.moveTo(lastX, lastY);
+	// go to 
+	ctx.lineTo(e.offsetX, e.offsetY);
+	ctx.stroke();
+	// update cursor position, ES6 style ("array destructuring")
+	//lastX = e.offsetX;
+	//lastY = e.offsetY;
+	[lastX, lastY] = [e.offsetX, e.offsetY];
+
+	hue++;
+	if (hue >= 360) {
+		hue = 0;
+	}
+
+	// if it's greater than 80, flip the direction so lineWidth doesn't continue to grow
+	if (ctx.lineWidth >= 80 || ctx.lineWidth <= 1){
+		direction = !direction;
+	}
+	//and depending on what that direction is, increase or decrease 
+	if (direction) {
+		ctx.lineWidth++;
+	} else {
+		ctx.lineWidth--;	
+	}
+
+	// creates a frame in which stroke blend mode changes.
+	// if ((lastX >= 513 || lastX <= 200) || (lastY >= 724 || lastY <= 300)) {
+	// 	ctx.globalCompositeOperation = 'xor';
+	// } else {
+	// 	ctx.globalCompositeOperation = 'multiply';
+	// }
+} 
+
+canvas.addEventListener('mousedown', (e) => {
+	isDrawing = true; // this is a flag
+	[lastX, lastY] = [e.offsetX, e.offsetY];
+
+});
+
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', () => isDrawing = false);
+canvas.addEventListener('mouseout', () => isDrawing = false); // if user drags mouse outside canvas ;)
+</script>
+
+<style>
+  html, body, canvas, h1{
+    margin:0;
+  }
+  body, section {
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	flex-direction: column;
+  }
+  h1 {
+  	font-family: "Trebuchet MS", Helvetica, sans-serif;
+  	font-size: 1.5em;
+  	text-decoration: none;
+  }
+  section {
+  	background-image: url("PKD.jpg");
+  	background-repeat: no-repeat;
+  	background-size: 476px 600px; 
+  	background-position: center;
+  }
+</style>
+
+</body>
+</html>
