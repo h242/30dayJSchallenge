@@ -58,6 +58,29 @@
       };
     }
 
+    const sliderImages = document.querySelectorAll('.slide-in');
+
+    function checkSlide(e) {
+    	//console.log(window.scrollY);
+    	sliderImages.forEach(sliderImage => {
+    		// so it only starts showing after reaching halfway thru the img
+    		const slideInAt = (window.scrollY + window.innerHeight) - sliderImage.height / 2;
+    		//console.log(slideInAt);
+    		
+    		// Also scroll from the bottom up:
+    		const imageBottom = sliderImage.offsetTop + sliderImage.height;
+    		const isHalfShown = slideInAt > sliderImage.offsetTop;
+    		const isNotScrolledPast = window.scrollY < imageBottom;
+    		if(isHalfShown && isNotScrolledPast) {
+    			sliderImage.classList.add('active');
+    		} else {
+    			sliderImage.classList.remove('active');
+    		}
+    	});
+    	console.count(e);
+    }
+// when doing sth on scroll, make sure u debounce it to avoid performance issues :) 
+    window.addEventListener('scroll', debounce(checkSlide));
   </script>
 
   <style>
